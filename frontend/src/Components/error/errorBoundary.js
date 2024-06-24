@@ -17,7 +17,12 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      return <h1>Something went wrong.</h1>;
+      return (
+        <div className="error-box">
+          <h1 className='text-bold'>Something went wrong.</h1>
+          {/* You can add additional error information or a custom message here */}
+        </div>
+      );
     }
 
     return this.props.children; 
