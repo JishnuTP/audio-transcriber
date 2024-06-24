@@ -5,7 +5,7 @@ Features----------------------------
 Recording and saving transcriptions
 User authentication - simple way only  after login we can start record
 --------------------------------------------------
-for login - username = admin
+for login - username = admin       {its a demo login with  localstorage not a proper login function only for the concept}
             password = 12345
 --------------------------------------------------
 Installation
