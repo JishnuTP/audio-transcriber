@@ -57,6 +57,7 @@ const TranscriptList = () => {
                                         </div>
                                     </div>
                                 ))
+                                
                             )}
                         </div>
                     </div>

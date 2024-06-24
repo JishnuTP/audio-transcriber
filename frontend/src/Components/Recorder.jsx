@@ -67,28 +67,40 @@ const Recorder = () => {
     };
     ///for saving transripted file
 
-    const saveTranscription = () => {
+    const saveTranscription = async () => {
+      try {
         if (!title || !transcript) {
-            console.error('Title or transcript is missing');
-            return;
+          console.error('Title or transcript is missing');
+          alert('Title or transcript is missing.');
+          return;
         }
-
-        axios.post('http://localhost:5000/api/saveTranscription', { title, transcript })
-            .then(response => {
-                console.log('Transcription saved to database:', response.data);
-                // Optionally clear the title and transcript after saving
-
-
-            })
-            .catch(error => {
-
-                console.error('Error saving transcription to database:', error);
-                setTranscript('');
-                setTitle('');
-
-            });
+    
+        const response = await axios.post('http://localhost:5000/api/saveTranscription', { title, transcript });
+        console.log('Transcription saved to database:', response.data);
+        alert('Error saving transcription to database.');
+      } catch (error) {
+        console.error('Error saving transcription to database:', error);
+    
+        // Additional logging to help identify the issue
+        if (error.response) {
+          // Server responded with a status other than 200 range
+          console.error('Error response data:', error.response.data);
+          console.error('Error response status:', error.response.status);
+          console.error('Error response headers:', error.response.headers);
+        } else if (error.request) {
+          // Request was made but no response received
+          console.error('Error request:', error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Error message:', error.message);
+        }
+        setTranscript('');
+        setTitle('');
+        alert('Transcription saved successfully.');
+       
+      }
     };
-
+    
     return (
         <div className="bg-muted rounded-xl p-6 w-full max-w-md shadow-lg">
             <div className="flex flex-col items-center space-y-4">

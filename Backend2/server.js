@@ -5,6 +5,7 @@ const axios = require('axios');
 const cors = require("cors")
 const { connectDb } = require('./db');
 const conversationController = require('./controllers/conversationControllers');
+const errorHandler = require('./middleware/error');
 require('dotenv').config();
 
 
@@ -26,13 +27,12 @@ const upload = multer({ storage });
 // Define storage for multer
 app.use(express.json());
 app.use(cors());
+app.use(errorHandler);
 
 // Connect to MongoDB
 connectDb();
 
 // Routes
-
-// app.post("api/transcribe",upload.single("audio"),conversationController.getTranscript);
 app.post('/api/transcribe', upload.single('audio'), conversationController.transcribeAudio);
 app.post('/api/saveTranscription', conversationController.createConversation);
 app.get('/api/transcripts', conversationController.getAllConversations);

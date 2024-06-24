@@ -5,13 +5,9 @@ const { createClient } = require('@deepgram/sdk');
 const conversationModel = require('../models/conversationModel');
 require('dotenv').config();
 
-// import { createClient } from "@deepgram/sdk";
-// import dotenv from "dotenv";
-// dotenv.config();
-
 const deepgramSDK = createClient(process.env.DEEPGRAM_API_KEY);
-
-const transcribeAudio = async (req, res) => {
+//for trancribe audio
+const transcribeAudio = async (req, res,next) => {
   try {
     // Ensure req.file exists and contains the audio file
     if (!req.file || !req.file.buffer) {
@@ -56,40 +52,29 @@ const transcribeAudio = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Error transcribing audio:', error);
+   next(error)
     res.status(500).json({ error: 'Error transcribing audio' });
   }
 };
 
 
 
-const getAllConversations = async (req, res) => {
-  console.log("getting");
-  try {
-    const conversations = await conversationModel.getConversations();
-    res.json(conversations);
-  } catch (error) {
-    console.error('Error fetching conversations:', error);
-    res.status(500).json({ error: 'Error fetching conversations' });
-  }
-};
-
-const createConversation = async (req, res) => {
-  console.log("Creating conversation with:", req.body);
-
+// saving trancript text to db
+const createConversation = async (req, res, next) => {
   try {
     const { title, transcript } = req.body;
+    console.log(req.body);
 
     // Check if transcript is provided
     if (!transcript) {
+      res.status(400);
       throw new Error('Transcript data is missing');
     }
 
     // Create conversation object
     const conversation = {
-      title: title,
-      transcriptions: transcript,
-
+      title: req.body.title,
+      transcriptions:req.body.transcript,
       timestamp: new Date()
     };
 
@@ -98,10 +83,24 @@ const createConversation = async (req, res) => {
 
     res.json(newConversation);
   } catch (error) {
-
-    res.status(500).json({ error: 'Error creating conversation' });
+    next(error); // Pass the error to the error handling middleware
   }
 };
+
+
+
+//getting all the records
+const getAllConversations = async (req, res,next) => {
+  try {
+    const conversations = await conversationModel.getConversations();
+    res.json(conversations);
+  } catch (error) {
+    next(error)
+    res.status(500).json({ error: 'Error fetching conversations' });
+  }
+};
+
+
 
 
 
